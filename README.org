@@ -1,0 +1,44 @@
+#+COLUMNS: %25ITEM %TAGS %PRIORITY %TODO %10EST(Estimate){:}
+#+TITLE:RABERT
+
+* Intro
+  To automate daily trivial tasks.
+* What it does
+  Records inputs and outputs to a shell (transcript) and provides an
+  interface to edit and link the inputs conditional to some of the
+  outputs so as to create an intelligent flow/script from a real
+  interactive session with a program(s).
+* Action Plan
+** Comint input recording
+   :PROPERTIES:
+   :EST:      1
+   :END:
+** Comint hooking output to input
+   :PROPERTIES:
+   :EST:      1
+   :END:
+*** Finding the success/failure of program that is run in bash etc.
+    Is this possible.
+** Output chipering
+   :PROPERTIES:
+   :EST:      12
+   :END:
+   Easy emacs based UI/functions to cipher the output to logical
+   blocks, whose outputs can be used for making the conditions.
+   Example conditions:
+   1) Count words/lines/chars
+   2) Similar text (Use an LCS/regex)
+   3) Not having similar text
+   4) Filter out particular words from patterns or positions
+** Hooking output to input
+   :PROPERTIES:
+   :EST:      12
+   :END:
+** Raising errors on failed output
+   :PROPERTIES:
+   :EST:      12
+   :END:
+** Alarming/mailing user on output failure for inspection
+   :PROPERTIES:
+   :EST:      1
+   :END:
