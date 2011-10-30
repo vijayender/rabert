@@ -3,6 +3,10 @@
 
 * Intro
   To automate daily trivial tasks.
+* Other packages used
+** Data structures
+   http://www.dr-qubit.org/emacs.php
+   http://www.dr-qubit.org/predictive/queue-0.1.el
 * What it does
   Records inputs and outputs to a shell (transcript) and provides an
   interface to edit and link the inputs conditional to some of the
