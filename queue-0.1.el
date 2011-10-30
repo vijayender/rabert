@@ -70,9 +70,9 @@ Returns nil if the queue is empty."
   (pop (queue-head queue)))
 
 
-(defmacro queue-empty (queue)
+(defun queue-empty (queue)
   "Return t if QUEUE is empty, otherwise return nil."
-  (null (queue-head ,queue)))
+  (null (queue-head queue)))
 
 
 (defmacro queue-first (queue)
