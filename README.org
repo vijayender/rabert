@@ -42,3 +42,26 @@
    :PROPERTIES:
    :EST:      1
    :END:
+* Sample script
+  #+begin_src lisp
+    (define-test test1 (a b c)
+      (let ((d nil))
+        (sw-open a)
+        (sw-config b)
+        (sw-config c)
+        (sw-config-no-sh)
+        (wait-for (d auth)
+                  (if (test-succesfull d)
+                      (mail "test 1 pass")
+                      (mail "test 1 fail")))
+        (pc-start-wpa c)
+        (finally
+         d)))
+    
+    (run-tests
+     (a (test1 1 2 3))
+     (b (test1 3 4 5))
+     (finally
+      (let ((d (list a b)))
+        (mail "vijay" (format nil "~a" d)))))
+  #+end_src  
