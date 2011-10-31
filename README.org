@@ -7,6 +7,8 @@
 ** Data structures
    http://www.dr-qubit.org/emacs.php
    http://www.dr-qubit.org/predictive/queue-0.1.el
+** Useful uri for beginning with comint programming
+   http://curiousprogrammer.wordpress.com/2009/03/27/emacs-comint/
 * What it does
   Records inputs and outputs to a shell (transcript) and provides an
   interface to edit and link the inputs conditional to some of the
