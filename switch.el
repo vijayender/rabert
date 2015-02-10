@@ -11,6 +11,7 @@
   pending-input
   pending-output
   next-callback
+  hostname
   temp-output-buffer
   process
   buffer)
@@ -25,6 +26,7 @@
 		     (pending-input (switch-pending-input ,@name))
 		     (pending-output (switch-pending-output ,@name))
 		     (next-callback (switch-next-callback ,@name))
+		     (hostname (switch-hostname ,@name))
 		     (temp-output-buffer (switch-temp-output-buffer ,@name))
 		     (process (switch-process ,@name))
 		     (buffer (switch-buffer ,@name)))
@@ -49,13 +51,17 @@
 (defmacro with-output-from-comm (sw comm &rest body)
   `(call-command ,sw (format "%s\r" ,comm) #'(lambda ,@body)))
 
-(print (macroexpand '(with-output-from-comm "sh flash" (str)
-					    (print str)
-					    (print str))))
+;; (print (macroexpand '(with-output-from-comm "sh flash" (str)
+;; 					    (print str)
+;; 					    (print str))))
 
 (defun sw-exec (sw) 
   (with-switch-slots (sw)
    (process-send-string process "\r\r\r")))
+
+(defun sw-config-multiple (sw comms)
+  (loop for comm in comms
+	do (sw-config sw comm)))
 
 (defun sw-config (sw comm)
   (call-command sw (format "%s\r" comm) nil))
@@ -73,7 +79,8 @@
 		       (setf (switch-process sw) (get-buffer-process name))
 		       (accept-process-output process)
 		       (with-current-buffer name
-			 (setf comint-prompt-regexp "^S5"))
+			 (setf comint-prompt-regexp hostname))
+		       (setf buffer name)
 		       (set-process-filter process input-func))))
 
 (defun sw-close (sw name)
@@ -93,17 +100,19 @@
 			(ordinary-insertion-filter proc string)
 			(setf temp-output-buffer (cons string temp-output-buffer))
 			(if string
-			    (if (string-match "^S5" string)
-				(progn	    
+			    (if (string-match hostname string)
+				(let ((callback next-callback)
+				      (output-buffer temp-output-buffer))
 				  (setf pending-input nil)
-				  (if next-callback
-				      (progn
-					(apply next-callback (list (mapconcat 'identity (reverse temp-output-buffer) "")))))
+				  (setf next-callback nil)
+				  (setf temp-output-buffer nil)
 				  (if (not (queue-empty input-queue))
 				      (let ((elem (queue-dequeue input-queue)))
 					(process-send-string proc (first elem))
 					(setf next-callback (second elem))))
-				  (setf temp-output-buffer nil)))))))
+				  (if callback
+				      (progn
+					(apply callback (list (mapconcat 'identity (reverse output-buffer) "")))))))))))
 
 (defun ordinary-insertion-filter (proc string)
   (with-current-buffer (process-buffer proc)
@@ -115,22 +124,3 @@
 	(set-marker (process-mark proc) (point)))
       (if moving (goto-char (process-mark proc))))))
 
-
-(defun run-test ()
-  (setq sw1 (make-switch))
-  (switch-input-receiver sw-1-in sw1)
-  (sw-open sw1 "10.104.34.136" "2050" 'sw-1-in)
-  (sw-exec sw1)
-  (sit-for 10)
-  (sw-config sw1 "en")
-  (sw-config sw1 "conf t")
-  (sw-config sw1 "hostname S5")
-  (sw-config sw1 "int g3/0/1")
-  (sw-config sw1 "do sh run int g3/0/2")
-  (with-output-from-comm sw1 "do sh flash"
-			 (str)
-			 (print "SSSUCCC")
-			 (print str)
-			 (sw-close sw1 name)))
-
-(run-test)
